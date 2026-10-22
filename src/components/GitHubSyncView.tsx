@@ -16,8 +16,8 @@ import {
 } from 'lucide-react';
 
 export const GitHubSyncView: React.FC = () => {
-  const [username, setUsername] = useState<string>('kye77877');
-  const [repoName, setRepoName] = useState<string>('myanmar-2d-analysis');
+  const [username, setUsername] = useState<string>('kaungmyatjapan1999-boop');
+  const [repoName, setRepoName] = useState<string>('2d');
   const [authType, setAuthType] = useState<'https' | 'ssh'>('https');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activeWorkflowTab, setActiveWorkflowTab] = useState<'autobuild' | 'pages'>('autobuild');
@@ -50,7 +50,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: \${{ github.workflow }}-\${{ github.ref }}
+  group: ` + '${{ github.workflow }}-${{ github.ref }}' + `
   cancel-in-progress: true
 
 jobs:
@@ -62,7 +62,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
       - run: npm install
       - run: npm run lint
       - run: npm run build
@@ -95,7 +94,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
       - run: npm install
       - run: npm run lint
       - run: npm run build
@@ -106,7 +104,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: \${{ steps.deployment.outputs.page_url }}
+      url: ` + '${{ steps.deployment.outputs.page_url }}' + `
     runs-on: ubuntu-latest
     needs: build
     steps:
