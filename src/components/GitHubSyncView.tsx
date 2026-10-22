@@ -417,13 +417,33 @@ jobs:
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-            <span className="font-extrabold text-indigo-700 flex items-center gap-1">
-              <span>အဆင့် (၄)</span> <ArrowRight className="w-3 h-3" /> GitHub Pages ဖွင့်လှစ်ခြင်း
+          <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200/80 space-y-1.5 md:col-span-2">
+            <span className="font-extrabold text-amber-900 flex items-center gap-1.5">
+              <span>အဆင့် (၄)</span> <ArrowRight className="w-3 h-3 text-amber-700" />
+              <span>GitHub Pages ဖွင့်လှစ်ခြင်း (အရေးကြီး - 404 မဖြစ်စေရန်)</span>
             </span>
-            <p className="text-slate-600 leading-relaxed">
-              Repository ရှိ <strong>Settings &gt; Pages</strong> သို့ သွားပြီး <strong>Source</strong> တွင် <strong>GitHub Actions</strong> ကို ရွေးချယ်ပေးပါက အလိုအလျောက် Live Website လွှင့်ပေးပါမည်။
+            <p className="text-slate-700 leading-relaxed text-xs">
+              Repository အသစ်များတွင် GitHub Pages ကို စတင်အသုံးပြုရန် GitHub Settings ထဲတွင် <strong>Source</strong> ကို သတ်မှတ်ပေးရပါသည်:
             </p>
+            <ol className="list-decimal list-inside space-y-1 text-slate-700 font-medium pl-1 text-[11px]">
+              <li>
+                <a
+                  href={`https://github.com/${username || 'kaungmyatjapan1999-boop'}/${repoName || '2d'}/settings/pages`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-indigo-600 font-bold underline inline-flex items-center gap-1 hover:text-indigo-800"
+                >
+                  <span>https://github.com/{username || 'kaungmyatjapan1999-boop'}/{repoName || '2d'}/settings/pages</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a> သို့ သွားပါ။
+              </li>
+              <li>
+                <strong>Build and deployment &gt; Source</strong> တွင် default ဖြစ်နေသော <em>"Deploy from a branch"</em> နေရာတွင် <strong>"GitHub Actions"</strong> ကို ရွေးချယ်ပေးပါ။
+              </li>
+              <li>
+                ရွေးချယ်ပြီးပါက <strong>Actions</strong> tab သို့ ပြန်သွားပြီး <strong>Re-run jobs</strong> ကို နှိပ်လိုက်သည်နှင့် Live Website လွှင့်ခြင်း အပြည့်အဝ အောင်မြင်သွားပါမည်!
+              </li>
+            </ol>
           </div>
         </div>
       </div>
