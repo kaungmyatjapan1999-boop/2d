@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix 2D Analysis Tool",
+  "description": "Myanmar 2D Live Results \u0026 Analysis Dashboard with real-time statistics, hot/cold patterns, and history management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
