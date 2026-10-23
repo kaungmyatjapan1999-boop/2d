@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2515a8">
+<title>2D Analysis Tool</title>
+
+<style>
+:root {
+    --bg: #f4f7ff;
+    --card: #ffffff;
+    --text: #172554;
+    --muted: #72809f;
+    --blue: #1685ff;
+    --purple: #773cff;
+    --pink: #ff4284;
+    --green: #08bf8a;
+    --orange: #ff9c21;
+    --border: #e4eaff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, "Noto Sans Myanmar",
+                 "Myanmar Text", sans-serif;
+    background: linear-gradient(145deg, #f5f7ff, #edf5ff, #fff5fa);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+button, input, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+header {
+    padding: 23px 17px;
+    color: white;
+    background: linear-gradient(120deg, #2414a7, #6532ed, #078bea);
+    border-radius: 0 0 27px 27px;
+    box-shadow: 0 8px 25px #3127b52b;
+}
+
+.header-inner {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 53px;
+    height: 53px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 17px;
+    background: linear-gradient(135deg, #00dcff, #a12bff);
+    font-size: 24px;
+    font-weight: 900;
+    box-shadow: 0 6px 20px #00d9ff40;
+}
+
+.brand h1 {
+    font-size: clamp(19px, 4vw, 29px);
+    line-height: 1.3;
+}
+
+.brand p {
+    font-size: 11px;
+    opacity: .85;
+    margin-top: 4px;
+}
+
+.live {
+    padding: 9px 12px;
+    border: 1px solid #ffffff55;
+    background: #ffffff17;
+    border-radius: 13px;
+    font-size: 11px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.live-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #42ffac;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    padding: 15px 13px 100px;
+    margin: auto;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 11px;
+}
+
+.stat {
+    padding: 15px;
+    min-height: 105px;
+    color: white;
+    border-radius: 17px;
+    box-shadow: 0 6px 20px #263d8012;
+}
+
+.stat-label {
+    font-size: 12px;
+    opacity: .92;
+}
+
+.stat-value {
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 900;
+    margin-top: 9px;
+}
+
+.stat small {
+    font-size: 10px;
+    opacity: .9;
+}
+
+.blue {
+    background: linear-gradient(135deg, #078cff, #4e36ee);
+}
+
+.green {
+    background: linear-gradient(135deg, #00c99a, #079a85);
+}
+
+.orange {
+    background: linear-gradient(135deg, #ffbd19, #ff7900);
+}
+
+.purple {
+    background: linear-gradient(135deg, #893cff, #d52de5);
+}
+
+.navigation {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin: 17px 0;
+}
+
+.nav-btn {
+    padding: 11px 4px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: white;
+    color: #526080;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 4px 14px #263d8008;
+}
+
+.nav-btn .icon {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.nav-btn.active {
+    color: white;
+    background: linear-gradient(135deg, #1685ff, #7438ef);
+    border-color: transparent;
+}
+
+.section {
+    margin-top: 15px;
+    scroll-margin-top: 12px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 850;
+    margin-bottom: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge {
+    background: #eaf1ff;
+    color: #2477ef;
+    padding: 5px 9px;
+    border-radius: 30px;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+}
+
+.card {
+    min-width: 0;
+    padding: 15px;
+    border-radius: 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 23px #263d800c;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+
+.result-box {
+    padding: 12px 8px;
+    border: 1px solid #dce9ff;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f1f9ff, #fff);
+}
+
+.result-time {
+    font-size: 11px;
+    font-weight: 800;
+    color: #53638b;
+}
+
+.result-number {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 950;
+    letter-spacing: 2px;
+    margin: 8px 0;
+    color: #2468ce;
+}
+
+.result-date {
+    text-align: center;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.hot-card {
+    background: linear-gradient(145deg, #fff0f5, white);
+    border-color: #ffd6e4;
+}
+
+.cold-card {
+    background: linear-gradient(145deg, #effaff, white);
+    border-color: #cceeff;
+}
+
+.number-list {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.number-item {
+    text-align: center;
+    min-width: 40px;
+}
+
+.ball {
+    width: 47px;
+    height: 47px;
+    display: grid;
+    place-items: center;
+    border: 3px solid white;
+    border-radius: 50%;
+    color: white;
+    font-size: 15px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ff5287, #ee2256);
+    box-shadow: 0 5px 12px #1a2c4b20;
+}
+
+.cold-card .ball {
+    background: linear-gradient(135deg, #09baff, #1467f4);
+}
+
+.number-item small {
+    display: block;
+    margin-top: 5px;
+    color: #647394;
+    font-size: 10px;
+}
+
+.note {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.8;
+    margin-top: 12px;
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 13px;
+}
+
+.bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 7px;
+    height: 165px;
+    border-bottom: 1px solid var(--border);
+    padding-top: 12px;
+}
+
+.bar-column {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    min-width: 0;
+}
+
+.bar {
+    width: min(30px, 90%);
+    min-height: 3px;
+    border-radius: 6px 6px 2px 2px;
+    background: linear-gradient(180deg, #8843ff, #1685ff);
+}
+
+.bar-number {
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.bar-count {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.donut-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.donut {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: conic-gradient(#08c997 0 50%, #ff4771 50% 100%);
+}
+
+.donut-center {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: white;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.donut-center strong {
+    color: var(--text);
+    font-size: 19px;
+}
+
+.legend {
+    flex: 1;
+    min-width: 100px;
+}
+
+.legend-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    margin: 12px 0;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.headtail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    margin-top: 13px;
+}
+
+.digit-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+}
+
+.digit {
+    text-align: center;
+    min-width: 0;
+}
+
+.digit span {
+    display: grid;
+    place-items: center;
+    width: clamp(21px, 3.5vw, 29px);
+    height: clamp(21px, 3.5vw, 29px);
+    margin: auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #17cba0, #087df5);
+    color: white;
+    font-weight: 900;
+    font-size: 11px;
+}
+
+.digit small {
+    display: block;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+.lower-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 13px;
+    margin-top: 13px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+th, td {
+    text-align: center;
+    padding: 9px 6px;
+    border-bottom: 1px solid #edf0fa;
+}
+
+th {
+    background: #f0f4ff;
+    color: #596b91;
+}
+
+.pair-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eef1fb;
+    font-size: 12px;
+}
+
+.pair-row:last-child {
+    border-bottom: 0;
+}
+
+.pair {
+    font-weight: 900;
+    color: var(--blue);
+}
+
+.field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.field {
+    flex: 1;
+    min-width: 110px;
+    padding: 11px;
+    border: 1px solid #dce4fa;
+    border-radius: 12px;
+    background: #fbfcff;
+    color: var(--text);
+    outline: none;
+}
+
+.field:focus {
+    border-color: #7167f9;
+}
+
+.btn {
+    padding: 11px 14px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #168bff, #6938ed);
+    color: white;
+    font-weight: 850;
+}
+
+.btn.green-btn {
+    background: linear-gradient(135deg, #00c99a, #04a8c2);
+}
+
+.btn.light-btn {
+    color: #3154a0;
+    background: #edf3ff;
+}
+
+.btn.red-btn {
+    background: linear-gradient(135deg, #ff5590, #ff7a51);
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.status {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #eafbf4;
+    color: #07845f;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.status.show {
+    display: block;
+}
+
+.history-scroll {
+    max-height: 360px;
+    overflow: auto;
+}
+
+.footer {
+    text-align: center;
+    padding: 18px 5px;
+    color: #8591b1;
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+.bottom-nav {
+    display: none;
+}
+
+@media(max-width:760px) {
+    header {
+        padding: 17px 13px 21px;
+    }
+
+    .logo {
+        width: 45px;
+        height: 45px;
+        font-size: 21px;
+    }
+
+    .brand h1 {
+        font-size: 19px;
+    }
+
+    .brand p {
+        font-size: 9px;
+    }
+
+    .live {
+        font-size: 9px;
+        padding: 7px;
+    }
+
+    .container {
+        padding: 13px 10px 100px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+    }
+
+    .stat {
+        padding: 12px;
+        min-height: 91px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .navigation {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin: 13px 0;
+    }
+
+    .nav-btn {
+        padding: 10px 3px;
+    }
+
+    .grid, .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .headtail {
+        grid-template-columns: 1fr;
+    }
+
+    .lower-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 13px;
+    }
+
+    .section-title {
+        font-size: 14px;
+    }
+
+    .bottom-nav {
+        position: fixed;
+        z-index: 20;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: space-around;
+        padding: 7px 3px calc(7px + env(safe-area-inset-bottom));
+        background: #191950f5;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 -7px 20px #1d2a571c;
+    }
+
+    .bottom-nav button {
+        min-width: 0;
+        border: 0;
+        padding: 5px 8px;
+        border-radius: 11px;
+        background: transparent;
+        color: #dbe4ff;
+        font-size: 9px;
+        font-weight: 800;
+    }
+
+    .bottom-nav button span {
+        display: block;
+        font-size: 19px;
+        margin-bottom: 2px;
+    }
+
+    .bottom-nav button.active {
+        color: white;
+        background: linear-gradient(135deg, #168bff, #6938ed);
+    }
+}
+
+@media(max-width:360px) {
+    .brand h1 { font-size: 16px; }
+    .live { max-width: 90px; white-space: normal; }
+    .stat-value { font-size: 21px; }
+    .result-box { padding: 9px 6px; }
+    .result-number { font-size: 25px; }
+    .digit-grid { gap: 1px; }
+}
+</style>
+</head>
+
+<body>
+
+<header id="top">
+    <div class="header-inner">
+        <div class="brand">
+            <div class="logo">2D</div>
+            <div>
+                <h1>2D Analysis Tool</h1>
+                <p>Data • Analysis • Better Decisions</p>
+            </div>
+        </div>
+        <div class="live">
+            <span class="live-dot"></span>
+            <b id="apiState">Local Mode</b>
+            <br>
+            <span id="todayDate"></span>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- DASHBOARD SUMMARY -->
+    <section class="stats">
+        <div class="stat blue">
+            <div class="stat-label">📚 စုစုပေါင်းမှတ်တမ်း</div>
+            <div class="stat-value" id="totalCount">0</div>
+            <small>သိမ်းထားသောရလဒ်များ</small>
+        </div>
+
+        <div class="stat green">
+            <div class="stat-label">⭐ နောက်ဆုံးရလဒ်</div>
+            <div class="stat-value" id="lastResult">--</div>
+            <small id="lastDate">မှတ်တမ်းမရှိသေးပါ</small>
+        </div>
+
+        <div class="stat orange">
+            <div class="stat-label">☀️ 11:00 AM</div>
+            <div class="stat-value" id="amCount">0</div>
+            <small>AM မှတ်တမ်း</small>
+        </div>
+
+        <div class="stat purple">
+            <div class="stat-label">🌙 PM ရလဒ်များ</div>
+            <div class="stat-value" id="pmCount">0</div>
+            <small>PM မှတ်တမ်း</small>
+        </div>
+    </section>
+
+    <!-- NAVIGATION -->
+    <nav class="navigation">
+        <button class="nav-btn active" data-target="dashboard">
+            <span class="icon">🏠</span>Dashboard
+        </button>
+        <button class="nav-btn" data-target="analysis">
+            <span class="icon">📊</span>Analysis
+        </button>
+        <button class="nav-btn" data-target="autofetch">
+            <span class="icon">☁️</span>Auto Fetch
+        </button>
+        <button class="nav-btn" data-target="history">
+            <span class="icon">📚</span>History
+        </button>
+        <button class="nav-btn" data-target="entry">
+            <span class="icon">📝</span>Data Entry
+        </button>
+        <button class="nav-btn" data-target="settings">
+            <span class="icon">⚙️</span>Settings
+        </button>
+    </nav>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="section">
+        <div class="grid">
+
+            <article class="card">
+                <h2 class="section-title">
+                    🌟 နောက်ဆုံးရလဒ်များ
+                    <span class="badge">LATEST</span>
+                </h2>
+
+                <div class="results-grid" id="latestSlots"></div>
+
+                <p class="note">
+                    မှတ်တမ်းအသစ်ကို Data Entry ကနေ ထည့်နိုင်ပါတယ်။
+                </p>
+            </article>
+
+            <article class="card hot-card">
+                <h2 class="section-title">
+                    🔥 Hot Numbers
+                    <span class="badge">HOT</span>
+                </h2>
+
+                <div class="number-list" id="hotNumbers"></div>
+
+                <p class="note">
+                    သင့်မှတ်တမ်းထဲတွင် အကြိမ်ရေများသောဂဏန်းများ။
+                </p>
+            </article>
+
+            <article class="card cold-card">
+                <h2 class="section-title">
+                    ❄️ Cold Numbers
+                    <span class="badge">COLD</span>
+                </h2>
+
+                <div class="number-list" id="coldNumbers"></div>
+
+                <p class="note">
+                    သိမ်းဆည်းထားသောရလဒ်များထဲတွင် တွေ့ရနည်းသောဂဏန်းများ။
+                </p>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- ANALYSIS -->
+    <section id="analysis" class="section">
+
+        <div class="analysis-grid">
+
+            <article class="card">
+                <h2 class="section-title">
+                    📈 Frequency Analysis
+                    <span class="badge">TOP 10</span>
+                </h2>
+
+                <div class="bars" id="frequencyBars"></div>
+
+                <p class="note">
+                    ဂဏန်းတစ်လုံးချင်းစီ ပေါ်လာသည့်အကြိမ်ရေကို ပြထားပါတယ်။
+                </p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">🌓 စုံ/မ Analysis</h2>
+
+                <div class="donut-row">
+                    <div class="donut" id="parityDonut">
+                        <div class="donut-center">
+                            စုစုပေါင်း
+                            <strong id="parityTotal">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-row">
+                            <span>
+                                <i class="legend-dot" style="background:#08c997"></i>
+                                စုံဂဏန်း
+                            </span>
+                            <b id="evenCount">0</b>
+                        </div>
+
+                        <div class="legend-row">
+                            <span>
+                                <i class="legend-dot" style="background:#ff4771"></i>
+                                မဂဏန်း
+                            </span>
+                            <b id="oddCount">0</b>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <div class="headtail">
+
+            <article class="card">
+                <h2 class="section-title">🟣 ထိပ်ဂဏန်း (Head)</h2>
+                <div class="digit-grid" id="headDigits"></div>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">🔵 နောက်ဂဏန်း (Tail)</h2>
+                <div class="digit-grid" id="tailDigits"></div>
+            </article>
+
+        </div>
+
+        <div class="lower-grid">
+
+            <article class="card">
+                <h2 class="section-title">📅 နောက်ဆုံး ၇ ရက်</h2>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ရက်စွဲ</th>
+                                <th>Draw</th>
+                                <th>ရလဒ်</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weekTable"></tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">🔁 Pair Pattern</h2>
+                <div id="pairPatterns"></div>
+                <p class="note">
+                    အတိတ်ရလဒ်များ၏ ဆက်နွယ်မှုပုံစံကိုသာ ဖော်ပြခြင်းဖြစ်ပါတယ်။
+                </p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">🎯 အနိမ့်/အမြင့်</h2>
+
+                <div class="donut-row">
+                    <div style="flex:1;text-align:center;padding:14px 5px;background:#eafbf5;border-radius:13px">
+                        <b style="color:#00a97c">00–49</b>
+                        <h3 id="lowCount">0</h3>
+                        <small id="lowPct">0%</small>
+                    </div>
+
+                    <div style="flex:1;text-align:center;padding:14px 5px;background:#f4edff;border-radius:13px">
+                        <b style="color:#8137e9">50–99</b>
+                        <h3 id="highCount">0</h3>
+                        <small id="highPct">0%</small>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- AUTO FETCH -->
+    <section id="autofetch" class="section">
+        <article class="card">
+            <h2 class="section-title">
+                ☁️ API Auto Fetch
+                <span class="badge">OPTIONAL</span>
+            </h2>
+
+            <p class="note" style="margin-top:0">
+                API ကနေ ရလဒ်ရယူဖို့ စမ်းသပ်နိုင်ပါတယ်။
+                Browser CORS ကန့်သတ်ချက်ကြောင့် အမြဲအောင်မြင်မယ်လို့
+                မအာမခံနိုင်ပါ။ API ကပေးတဲ့ အမှန်တကယ်ရလဒ်ကိုသာ
+                သိမ်းဆည်းမှာဖြစ်ပါတယ်။
+            </p>
+
+            <div class="field-row" style="margin-top:12px">
+                <input
+                    class="field"
+                    id="apiUrl"
+                    aria-label="API URL"
+                    value="https://myanmar2d-proxy.2dmyanmar-team.workers.dev/live"
+                >
+
+                <button class="btn" id="fetchBtn">🔄 Fetch Now</button>
+            </div>
+
+            <div id="fetchStatus" class="status"></div>
+        </article>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="history" class="section">
+        <article class="card">
+            <h2 class="section-title">
+                📚 ရလဒ်မှတ်တမ်း
+                <span class="badge" id="historyBadge">0 RECORDS</span>
+            </h2>
+
+            <div class="field-row" style="margin-bottom:12px">
+                <input class="field" type="date" id="filterDate" aria-label="Filter date">
+
+                <select class="field" id="filterTime" aria-label="Filter time">
+                    <option value="">အချိန်အားလုံး</option>
+                    <option>11:00 AM</option>
+                    <option>12:01 PM</option>
+                    <option>3:00 PM</option>
+                    <option>4:30 PM</option>
+                </select>
+
+                <button class="btn light-btn" id="clearFilters">ရှင်းလင်း</button>
+            </div>
+
+            <div class="history-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ရက်စွဲ</th>
+                            <th>အချိန်</th>
+                            <th>ဂဏန်း</th>
+                            <th>Source</th>
+                            <th>လုပ်ဆောင်ချက်</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyRows"></tbody>
+                </table>
+            </div>
+
+            <p class="note">
+                မှတ်တမ်းများကို ဒီ Browser ရဲ့ Local Storage ထဲမှာ သိမ်းထားပါတယ်။
+                Browser data ရှင်းလိုက်ရင် ပျောက်နိုင်တဲ့အတွက် CSV Export လုပ်ထားပါ။
+            </p>
+        </article>
+    </section>
+
+    <!-- ENTRY -->
+    <section id="entry" class="section">
+        <article class="card">
+            <h2 class="section-title">✍️ ရလဒ်အသစ်ထည့်ရန်</h2>
+
+            <form id="entryForm">
+                <div class="field-row">
+                    <input class="field" type="date" id="drawDate" required>
+
+                    <select class="field" id="drawTime">
+                        <option>11:00 AM</option>
+                        <option>12:01 PM</option>
+                        <option>3:00 PM</option>
+                        <option>4:30 PM</option>
+                    </select>
+
+                    <input
+                        class="field"
+                        id="drawNumber"
+                        inputmode="numeric"
+                        pattern="[0-9]{2}"
+                        maxlength="2"
+                        placeholder="00–99"
+                        required
+                    >
+                </div>
+
+                <div class="controls">
+                    <button class="btn" type="submit">＋ သိမ်းဆည်းရန်</button>
+
+                    <button class="btn green-btn" type="button" id="exportBtn">
+                        ⬇ CSV Export
+                    </button>
+
+                    <label class="btn light-btn" for="importFile">
+                        ⬆ CSV Import
+                    </label>
+
+                    <input id="importFile" type="file" accept=".csv,text/csv" hidden>
+                </div>
+            </form>
+
+            <div id="entryStatus" class="status"></div>
+        </article>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="section">
+        <article class="card">
+            <h2 class="section-title">⚙️ Settings & Data</h2>
+
+            <p class="note" style="margin-top:0">
+                ဒေတာများကို ဒီ Browser ရဲ့ Local Storage ထဲမှာသာ သိမ်းထားပါတယ်။
+                အခြားဖုန်း သို့မဟုတ် Browser နဲ့ အလိုအလျောက် မမျှဝေပါ။
+            </p>
+
+            <div class="controls">
+                <button class="btn light-btn" id="backupBtn">
+                    💾 JSON Backup
+                </button>
+
+                <button class="btn red-btn" id="clearDataBtn">
+                    🗑️ ဒေတာအားလုံးဖျက်ရန်
+                </button>
+            </div>
+
+            <div id="settingsStatus" class="status"></div>
+        </article>
+    </section>
+
+    <footer class="footer">
+        2D Analysis Tool • Mobile Friendly Dashboard<br>
+        အတိတ်ရလဒ်များသည် အနာဂတ်ရလဒ်ကို အာမမခံပါ။
+        Analysis သည် မှတ်တမ်းအချက်အလက်ကိုသာ ဖော်ပြပါတယ်။
+    </footer>
+
+</main>
+
+<nav class="bottom-nav">
+    <button class="active" data-target="dashboard"><span>⌂</span>Home</button>
+    <button data-target="analysis"><span>▥</span>Analysis</button>
+    <button data-target="autofetch"><span>☁</span>Fetch</button>
+    <button data-target="history"><span>▤</span>History</button>
+    <button data-target="entry"><span>＋</span>Data</button>
+    <button data-target="settings"><span>⚙</span>Settings</button>
+</nav>
+
+<script>
+'use strict';
+
+const STORAGE_KEY = 'twoDAnalysisRecords_v1';
+const TIMES = ['11:00 AM', '12:01 PM', '3:00 PM', '4:30 PM'];
+
+let records = loadRecords();
+
+const $ = id => document.getElementById(id);
+
+function pad(n) {
+    return String(n).padStart(2, '0');
+}
+
+function today() {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+
+function loadRecords() {
+    try {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        return Array.isArray(data) ? data.filter(validRecord) : [];
+    } catch {
+        return [];
+    }
+}
+
+function validRecord(r) {
+    return r &&
+        /^\d{4}-\d{2}-\d{2}$/.test(r.date) &&
+        TIMES.includes(r.time) &&
+        /^\d{2}$/.test(String(r.number));
+}
+
+function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    render();
+}
+
+function ordered() {
+    return [...records].sort((a,b) =>
+        a.date.localeCompare(b.date) ||
+        TIMES.indexOf(a.time)-TIMES.indexOf(b.time)
+    );
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+    }[c]));
+}
+
+function showStatus(id, message) {
+    const el = $(id);
+    el.textContent = message;
+    el.classList.add('show');
+}
+
+function addRecord(date, time, number, source='Manual') {
+    number = String(number).trim();
+
+    if (!validRecord({date,time,number})) {
+        return 'ရက်စွဲ၊ အချိန် သို့မဟုတ် ဂဏန်း မမှန်ပါ။';
+    }
+
+    const existing = records.findIndex(r =>
+        r.date === date && r.time === time
+    );
+
+    const item = {date,time,number,source};
+
+    if (existing >= 0) {
+        if (records[existing].number === number) {
+            return 'ဒီရက်စွဲနဲ့အချိန်အတွက် ရလဒ်ရှိပြီးသားပါ။';
+        }
+
+        if (!confirm('ဒီရက်စွဲနဲ့အချိန်မှာ ရလဒ်ရှိပြီးသားပါ။ အစားထိုးမလား?')) {
+            return 'အစားထိုးခြင်းကို ပယ်ဖျက်လိုက်ပါတယ်။';
+        }
+
+        records[existing] = item;
+        save();
+        return 'ရှိပြီးသားရလဒ်ကို အစားထိုးသိမ်းဆည်းပြီးပါပြီ။';
+    }
+
+    records.push(item);
+    save();
+    return 'ရလဒ်ကို သိမ်းဆည်းပြီးပါပြီ။';
+}
+
+function counts(list) {
+    const c = Array(100).fill(0);
+    list.forEach(r => c[Number(r.number)]++);
+    return c;
+}
+
+function percent(n,total) {
+    return total ? `${(n*100/total).toFixed(1)}%` : '0%';
+}
+
+function render() {
+    $('todayDate').textContent =
+        new Date().toLocaleDateString(undefined, {
+            year:'numeric',
+            month:'short',
+            day:'numeric'
+        });
+
+    $('totalCount').textContent = records.length.toLocaleString();
+
+    const list = ordered();
+    const last = list[list.length-1];
+
+    $('lastResult').textContent = last ? last.number : '--';
+    $('lastDate').textContent = last
+        ? `${last.date} • ${last.time}`
+        : 'မှတ်တမ်းမရှိသေးပါ';
+
+    $('amCount').textContent =
+        records.filter(r => r.time === '11:00 AM').length;
+
+    $('pmCount').textContent =
+        records.filter(r => r.time !== '11:00 AM').length;
+
+    $('latestSlots').innerHTML = TIMES.map((time,i) => {
+        const found = list.filter(r => r.time === time).slice(-1)[0];
+
+        return `
+            <div class="result-box">
+                <div class="result-time">
+                    ${['☀️','🌤️','🌇','🌙'][i]} ${time}
+                </div>
+                <div class="result-number">${found ? escapeHtml(found.number) : '--'}</div>
+                <div class="result-date">${found ? escapeHtml(found.date) : 'ရလဒ်မရှိသေးပါ'}</div>
+            </div>
+        `;
+    }).join('');
+
+    const frequency = counts(records);
+
+    const nonzero = Array.from({length:100},(_,n)=>n)
+        .filter(n=>frequency[n]>0)
+        .sort((a,b)=>frequency[b]-frequency[a] || a-b);
+
+    const hot = nonzero.slice(0,5);
+
+    const cold = Array.from({length:100},(_,n)=>n)
+        .sort((a,b)=>frequency[a]-frequency[b] || a-b)
+        .slice(0,5);
+
+    $('hotNumbers').innerHTML = hot.length
+        ? hot.map(n=>`
+            <div class="number-item">
+                <div class="ball">${pad(n)}</div>
+                <small>${frequency[n]} ကြိမ်</small>
+            </div>
+        `).join('')
+        : '<p class="note">ရလဒ်ထည့်ပြီးနောက် ပြသပါမယ်။</p>';
+
+    $('coldNumbers').innerHTML = records.length
+        ? cold.map(n=>`
+            <div class="number-item">
+                <div class="ball">${pad(n)}</div>
+                <small>${frequency[n]} ကြိမ်</small>
+            </div>
+        `).join('')
+        : '<p class="note">ရလဒ်ထည့်ပြီးနောက် ပြသပါမယ်။</p>';
+
+    const top = nonzero.slice(0,10);
+    const max = Math.max(1,...top.map(n=>frequency[n]));
+
+    $('frequencyBars').innerHTML = top.length
+        ? top.map((n,i)=>`
+            <div class="bar-column">
+                <span class="bar-count">${frequency[n]}</span>
+                <div class="bar" style="
+                    height:${Math.max(3,frequency[n]/max*100)}%;
+                    background:${[
+                        '#ff4f88','#ff9b22','#ffca31','#31c98b',
+                        '#05bfa8','#1aa8ff','#3178ff','#8056f5',
+                        '#c54cf2','#e448b3'
+                    ][i]}
+                "></div>
+                <span class="bar-number">${pad(n)}</span>
+            </div>
+        `).join('')
+        : '<p class="note">Frequency ပြရန် ရလဒ်ထည့်ပါ။</p>';
+
+    const even = records.filter(r=>Number(r.number)%2===0).length;
+    const odd = records.length-even;
+
+    $('evenCount').textContent = even;
+    $('oddCount').textContent = odd;
+    $('parityTotal').textContent = records.length;
+
+    $('parityDonut').style.background = records.length
+        ? `conic-gradient(#08c997 0 ${even/records.length*100}%,#ff4771 ${even/records.length*100}% 100%)`
+        : 'conic-gradient(#dfe6f5 0 100%)';
+
+    const heads = Array(10).fill(0);
+    const tails = Array(10).fill(0);
+
+    records.forEach(r=>{
+        heads[Number(r.number[0])]++;
+        tails[Number(r.number[1])]++;
+    });
+
+    $('headDigits').innerHTML = heads.map((n,i)=>`
+        <div class="digit">
+            <span>${i}</span>
+            <small>${n}</small>
+        </div>
+    `).join('');
+
+    $('tailDigits').innerHTML = tails.map((n,i)=>`
+        <div class="digit">
+            <span>${i}</span>
+            <small>${n}</small>
+        </div>
+    `).join('');
+
+    const low = records.filter(r=>Number(r.number)<50).length;
+    const high = records.length-low;
+
+    $('lowCount').textContent = low;
+    $('highCount').textContent = high;
+    $('lowPct').textContent = percent(low,records.length);
+    $('highPct').textContent = percent(high,records.length);
+
+    const days = [];
+
+    for(let i=6;i>=0;i--){
+        const d = new Date();
+        d.setDate(d.getDate()-i);
+        days.push(`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`);
+    }
+
+    $('weekTable').innerHTML = days.map(date=>{
+        const dayRecords = records.filter(r=>r.date===date);
+
+        return `
+            <tr>
+                <td>${date}</td>
+                <td>${dayRecords.length}</td>
+                <td>${dayRecords.length
+                    ? dayRecords.map(r=>escapeHtml(r.number)).join(' · ')
+                    : '—'}
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    const pairs = {};
+
+    for(let i=1;i<list.length;i++){
+        const key = `${list[i-1].number} → ${list[i].number}`;
+        pairs[key] = (pairs[key]||0)+1;
+    }
+
+    const common = Object.entries(pairs)
+        .sort((a,b)=>b[1]-a[1])
+        .slice(0,4);
+
+    $('pairPatterns').innerHTML = common.length
+        ? common.map(([pair,count])=>`
+            <div class="pair-row">
+                <span class="pair">${escapeHtml(pair)}</span>
+                <b>${count} ကြိမ်</b>
+            </div>
+        `).join('')
+        : '<p class="note">ဆက်တိုက်ရလဒ် ၂ ခုထက်ပို ထည့်ပါ။</p>';
+
+    renderHistory();
+}
+
+function renderHistory() {
+    const date = $('filterDate').value;
+    const time = $('filterTime').value;
+
+    const list = ordered().filter(r=>
+        (!date || r.date===date) &&
+        (!time || r.time===time)
+    ).reverse();
+
+    $('historyBadge').textContent = `${list.length} RECORDS`;
+
+    $('historyRows').innerHTML = list.length
+        ? list.map(r=>`
+            <tr>
+                <td>${escapeHtml(r.date)}</td>
+                <td>${escapeHtml(r.time)}</td>
+                <td><b>${escapeHtml(r.number)}</b></td>
+                <td>${escapeHtml(r.source||'Manual')}</td>
+                <td>
+                    <button class="btn light-btn" data-edit="${escapeHtml(r.date+'|'+r.time)}">ပြင်</button>
+                    <button class="btn red-btn" data-delete="${escapeHtml(r.date+'|'+r.time)}">ဖျက်</button>
+                </td>
+            </tr>
+        `).join('')
+        : '<tr><td colspan="5">မှတ်တမ်းမရှိသေးပါ</td></tr>';
+}
+
+$('entryForm').addEventListener('submit',e=>{
+    e.preventDefault();
+
+    const message = addRecord(
+        $('drawDate').value,
+        $('drawTime').value,
+        $('drawNumber').value,
+        'Manual'
+    );
+
+    showStatus('entryStatus',message);
+
+    if(message.startsWith('ရလဒ်ကို')){
+        $('drawNumber').value='';
+    }
+});
+
+$('drawDate').value = today();
+
+$('filterDate').addEventListener('change',renderHistory);
+$('filterTime').addEventListener('change',renderHistory);
+
+$('clearFilters').addEventListener('click',()=>{
+    $('filterDate').value='';
+    $('filterTime').value='';
+    renderHistory();
+});
+
+$('historyRows').addEventListener('click',e=>{
+    const del = e.target.closest('[data-delete]');
+    const edit = e.target.closest('[data-edit]');
+
+    if(del){
+        const [date,time] = del.dataset.delete.split('|');
+
+        if(confirm(`${date} ${time} ရလဒ်ကို ဖျက်မှာ သေချာပါသလား?`)){
+            records = records.filter(r=>!(r.date===date&&r.time===time));
+            save();
+        }
+    }
+
+    if(edit){
+        const [date,time] = edit.dataset.edit.split('|');
+        const record = records.find(r=>r.date===date&&r.time===time);
+
+        if(record){
+            $('drawDate').value=record.date;
+            $('drawTime').value=record.time;
+            $('drawNumber').value=record.number;
+            $('entry').scrollIntoView({behavior:'smooth'});
+        }
+    }
+});
+
+function downloadFile(name,content,type){
+    const blob = new Blob([content],{type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    a.href=url;
+    a.download=name;
+    a.click();
+
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+$('exportBtn').addEventListener('click',()=>{
+    const rows = [
+        ['draw_date','draw_time','number','source'],
+        ...ordered().map(r=>[
+            r.date,r.time,r.number,r.source||'Manual'
+        ])
+    ];
+
+    const csv = '\ufeff'+rows.map(row=>
+        row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')
+    ).join('\r\n');
+
+    downloadFile('2d-history.csv',csv,'text/csv;charset=utf-8');
+});
+
+$('backupBtn').addEventListener('click',()=>{
+    downloadFile(
+        '2d-backup.json',
+        JSON.stringify(records,null,2),
+        'application/json'
+    );
+});
+
+$('clearDataBtn').addEventListener('click',()=>{
+    if(confirm('သိမ်းထားတဲ့ရလဒ်အားလုံးကို ဖျက်မှာ သေချာပါသလား?')){
+        records=[];
+        save();
+        showStatus('settingsStatus','ဒေတာအားလုံး ဖျက်ပြီးပါပြီ။');
+    }
+});
+
+$('importFile').addEventListener('change',async e=>{
+    const file=e.target.files[0];
+    if(!file)return;
+
+    try{
+        const content=(await file.text()).replace(/^\uFEFF/,'');
+        const lines=content.split(/\r?\n/).filter(Boolean);
+        let added=0, skipped=0;
+
+        for(let i=1;i<lines.length;i++){
+            const cols=lines[i].split(',').map(v=>
+                v.trim().replace(/^"|"$/g,'').replace(/""/g,'"')
+            );
+
+            if(cols.length<3){skipped++;continue}
+
+            const [date,time,number]=cols;
+            const message=addRecord(date,time,number,'CSV');
+
+            if(message.startsWith('ရလဒ်ကို') ||
+               message.startsWith('ရှိပြီးသား')){
+                added++;
+            }else{
+                skipped++;
+            }
+        }
+
+        showStatus(
+            'entryStatus',
+            `CSV Import ပြီးပါပြီ။ ထည့်/အစားထိုး: ${added}၊ ကျော်သွား: ${skipped}`
+        );
+    }catch(error){
+        showStatus('entryStatus','CSV ဖိုင်ဖတ်မရပါ။');
+    }
+
+    e.target.value='';
+});
+
+$('fetchBtn').addEventListener('click',async()=>{
+    const btn=$('fetchBtn');
+
+    btn.disabled=true;
+    btn.textContent='⏳ Fetching…';
+    $('apiState').textContent='Connecting';
+
+    showStatus('fetchStatus','API ကို ချိတ်ဆက်နေပါတယ်…');
+
+    try{
+        const response=await fetch($('apiUrl').value.trim(),{
+            cache:'no-store'
+        });
+
+        if(!response.ok)throw new Error('HTTP '+response.status);
+
+        const data=await response.json();
+        const candidates=[];
+
+        if(Array.isArray(data.result))candidates.push(...data.result);
+        if(Array.isArray(data.results))candidates.push(...data.results);
+
+        let saved=0,skipped=0;
+
+        for(const item of candidates){
+            const date=String(item.date||item.draw_date||'').slice(0,10);
+            const number=String(item.twod||item.number||item.value||'').trim();
+
+            let raw=String(item.time||item.draw_time||item.datetime||'');
+
+            if(!raw&&item.date&&String(item.date).includes(' ')){
+                raw=String(item.date).split(' ')[1];
+            }
+
+            let time='';
+
+            if(/11:00/.test(raw))time='11:00 AM';
+            else if(/12:01/.test(raw))time='12:01 PM';
+            else if(/15:00|3:00/.test(raw))time='3:00 PM';
+            else if(/16:30|4:30/.test(raw))time='4:30 PM';
+
+            if(!date||number==='--'||!/^\d{2}$/.test(number)||!time){
+                skipped++;
+                continue;
+            }
+
+            const existing=records.find(r=>r.date===date&&r.time===time);
+
+            if(existing&&existing.number===number){
+                skipped++;
+                continue;
+            }
+
+            const message=addRecord(date,time,number,'API');
+
+            if(message.startsWith('ရလဒ်ကို')||
+               message.startsWith('ရှိပြီးသား')){
+                saved++;
+            }else{
+                skipped++;
+            }
+        }
+
+        $('apiState').textContent='API Connected';
+
+        showStatus(
+            'fetchStatus',
+            `Fetch ပြီးပါပြီ။ သိမ်း/ပြင်ဆင်: ${saved}၊ ကျော်သွား: ${skipped}။`
+        );
+    }catch(error){
+        $('apiState').textContent='Local Mode';
+
+        showStatus(
+            'fetchStatus',
+            `Fetch မအောင်မြင်ပါ: ${error.message}. CORS သို့မဟုတ် API ပြဿနာ ဖြစ်နိုင်ပါတယ်။ Manual Entry ကို ဆက်သုံးနိုင်ပါတယ်။`
+        );
+    }finally{
+        btn.disabled=false;
+        btn.textContent='🔄 Fetch Now';
+    }
+});
+
+document.querySelectorAll('[data-target]').forEach(button=>{
+    button.addEventListener('click',()=>{
+        const target=$(button.dataset.target);
+
+        if(target){
+            target.scrollIntoView({
+                behavior:'smooth',
+                block:'start'
+            });
+        }
+
+        document.querySelectorAll('[data-target]').forEach(item=>{
+            item.classList.toggle(
+                'active',
+                item.dataset.target===button.dataset.target
+            );
+        });
+    });
+});
+
+render();
+</script>
+
+</body>
+</html>
