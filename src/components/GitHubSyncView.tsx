@@ -49,6 +49,9 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 concurrency:
   group: ` + '${{ github.workflow }}-${{ github.ref }}' + `
   cancel-in-progress: true
@@ -61,54 +64,21 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - run: npm install
       - run: npm run lint
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
           name: dist-build-output
-          path: dist/`;
-
-  const pagesYaml = `name: Autobuild & Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+          path: dist/
+      - name: Deploy to gh-pages branch
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        continue-on-error: true
         with:
-          node-version: 20
-      - run: npm install
-      - run: npm run lint
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ` + '${{ steps.deployment.outputs.page_url }}' + `
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/deploy-pages@v4`;
+          github_token: ` + '${{ secrets.GITHUB_TOKEN }}' + `
+          publish_dir: ./dist`;
 
   return (
     <div className="space-y-6">
@@ -277,109 +247,53 @@ jobs:
       </div>
 
       {/* Autobuild Features & Workflows */}
+      {/* Autobuild Features & Workflows */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-5 md:p-6 shadow-[0_6px_23px_rgba(38,61,128,0.05)] space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div>
             <h4 className="text-sm font-extrabold text-slate-800 flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-500" />
-              <span>၂။ GitHub Actions Autobuild စနစ်များ (Configured Workflows)</span>
+              <span>၂။ GitHub Actions Autobuild စနစ် (Configured Workflow)</span>
             </h4>
             <p className="text-xs text-slate-500 mt-0.5">
-              အောက်ပါ YAML ဖိုင် ၂ ခုကို repository ထဲတွင် အသင့်ထည့်သွင်းပေးထားပြီးဖြစ်ပါသည်။
+              Build & Verification နှင့် Live Hosting ကို တစ်ခုတည်းသော <code>.github/workflows/autobuild.yml</code> ဖြင့် အပြည့်အဝ စီစဉ်ပေးထားပါသည်။
             </p>
           </div>
-        </div>
-
-        {/* Workflow Tabs */}
-        <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-          <button
-            onClick={() => setActiveWorkflowTab('autobuild')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-              activeWorkflowTab === 'autobuild'
-                ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <FileCode className="w-3.5 h-3.5 text-indigo-600" />
-            <span>.github/workflows/autobuild.yml (CI Build)</span>
-          </button>
-          <button
-            onClick={() => setActiveWorkflowTab('pages')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-              activeWorkflowTab === 'pages'
-                ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5 text-indigo-600" />
-            <span>.github/workflows/deploy-pages.yml (GitHub Pages Live)</span>
-          </button>
+          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full uppercase border border-emerald-200">
+            Node.js 22 Ready
+          </span>
         </div>
 
         {/* Workflow Details */}
-        {activeWorkflowTab === 'autobuild' ? (
-          <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="font-bold text-slate-700 block">Trigger Events:</span>
-                <span className="text-slate-600 font-mono mt-0.5 block">push to main, pull_request, manual</span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="font-bold text-slate-700 block">Build Pipeline:</span>
-                <span className="text-slate-600 font-mono mt-0.5 block">node v20, lint, vite build</span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="font-bold text-slate-700 block">Output Artifacts:</span>
-                <span className="text-emerald-700 font-semibold mt-0.5 block">dist/ zip download (14 days)</span>
-              </div>
+        <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <span className="font-bold text-slate-700 block">Trigger Events:</span>
+              <span className="text-slate-600 font-mono mt-0.5 block">push to main, pull_request, manual</span>
             </div>
-
-            <div className="relative">
-              <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] overflow-x-auto max-h-56 leading-relaxed border border-slate-800">
-                {autobuildYaml}
-              </pre>
-              <button
-                onClick={() => handleCopy(autobuildYaml, 'autobuild-yaml')}
-                className="absolute top-2 right-2 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] font-bold transition flex items-center gap-1 cursor-pointer"
-              >
-                {copiedId === 'autobuild-yaml' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                <span>Copy YAML</span>
-              </button>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <span className="font-bold text-slate-700 block">Build Pipeline:</span>
+              <span className="text-slate-600 font-mono mt-0.5 block">Node v22, lint, vite build</span>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <span className="font-bold text-slate-700 block">Output & Deploy:</span>
+              <span className="text-emerald-700 font-semibold mt-0.5 block">dist/ artifact + gh-pages</span>
             </div>
           </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="font-bold text-slate-700 block">Deploy Trigger:</span>
-                <span className="text-slate-600 font-mono mt-0.5 block">push to main branch</span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="font-bold text-slate-700 block">Target Host:</span>
-                <span className="text-indigo-700 font-bold mt-0.5 block">Free GitHub Pages</span>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="font-bold text-slate-700 block">Live URL Format:</span>
-                <span className="text-slate-600 font-mono text-[10px] mt-0.5 block break-all">
-                  https://{username || 'username'}.github.io/{repoName || 'repo'}/
-                </span>
-              </div>
-            </div>
 
-            <div className="relative">
-              <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] overflow-x-auto max-h-56 leading-relaxed border border-slate-800">
-                {pagesYaml}
-              </pre>
-              <button
-                onClick={() => handleCopy(pagesYaml, 'pages-yaml')}
-                className="absolute top-2 right-2 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] font-bold transition flex items-center gap-1 cursor-pointer"
-              >
-                {copiedId === 'pages-yaml' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                <span>Copy YAML</span>
-              </button>
-            </div>
+          <div className="relative">
+            <pre className="p-3.5 rounded-xl bg-slate-900 text-slate-200 font-mono text-[11px] overflow-x-auto max-h-56 leading-relaxed border border-slate-800">
+              {autobuildYaml}
+            </pre>
+            <button
+              onClick={() => handleCopy(autobuildYaml, 'autobuild-yaml')}
+              className="absolute top-2 right-2 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] font-bold transition flex items-center gap-1 cursor-pointer"
+            >
+              {copiedId === 'autobuild-yaml' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              <span>Copy YAML</span>
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Step by step Guide in Burmese */}
